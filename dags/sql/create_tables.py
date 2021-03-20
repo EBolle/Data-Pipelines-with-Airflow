@@ -2,9 +2,9 @@
 
 
 staging_events = """
-DROP TABLE IF EXISTS public.staging_events;
+DROP TABLE IF EXISTS PUBLIC.staging_events;
 
-CREATE TABLE public.staging_events (
+CREATE TABLE PUBLIC.staging_events (
     artist text,
     auth text,
     firstName text,
@@ -29,9 +29,9 @@ diststyle even
 
 
 staging_songs = """
-DROP TABLE IF EXISTS public.staging_songs;
+DROP TABLE IF EXISTS PUBLIC.staging_songs;
 
-CREATE TABLE staging_songs (
+CREATE TABLE PUBLIC.staging_songs (
     num_songs int,
     artist_id text,
     artist_latitude real,
