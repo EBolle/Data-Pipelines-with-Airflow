@@ -1,4 +1,5 @@
-  # Airflow DAG which extracts, loads, and transform data from S3 to Redshift
+# Airflow DAG which extracts, loads, and transform data from S3 to Redshift
+
 
 import datetime
 from datetime import timedelta
@@ -10,8 +11,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 from sql import create_tables, insert_tables
 
-
-  # DAG setup
+# DAG setup
 
 default_args = {'owner': 'airflow',
                 'depends_on_past': False,
@@ -26,7 +26,7 @@ dag = DAG('s3_to_redshift',
           default_args=default_args,
           catchup=False)
 
-  # DAG Operators
+# DAG Operators
 
 start_operator = PostgresOperator(
     task_id='Begin_execution',
@@ -79,12 +79,22 @@ load_artist = PostgresOperator(
     sql=insert_tables.artist)
 
 load_time = PostgresOperator(
-    task_id='load_time_fact_table',
+    task_id='Load_time_fact_table',
     dag=dag,
     postgres_conn_id='redshift',
     sql=insert_tables.time)
 
-  # Task order
+data_quality = DummyOperator(
+    task_id='Run_data_quality_checks',
+    dag=dag
+)
+
+end = DummyOperator(
+    task_id='End_execution',
+    dag=dag
+    )
+
+# Order of execution
 
 start_operator >> load_staging_events
 start_operator >> load_staging_song
@@ -96,3 +106,10 @@ load_songplays >> load_users
 load_songplays >> load_songs
 load_songplays >> load_artist
 load_songplays >> load_time
+
+load_songplays >> data_quality
+load_songplays >> data_quality
+load_songplays >> data_quality
+load_songplays >> data_quality
+
+data_quality >> end

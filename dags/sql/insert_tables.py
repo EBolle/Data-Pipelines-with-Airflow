@@ -1,16 +1,42 @@
-  # INSERT INTO statements on the Redshift cluster
+# INSERT INTO statements on the Redshift cluster
 
 
-songplays = """"""
+songplays = """
+INSERT INTO public.songplays
+SELECT timestamp 'epoch' + CAST(events.ts AS BIGINT)/1000 * interval '1 second' AS start_time 
+,    cast(events.userid as int) as user_id
+,    events.level
+,    song.song_id
+,    song.artist_id
+,    events.sessionid as session_id
+,    events.location
+,    events.useragent as user_agent
 
+FROM
+    (
+    SELECT *
+        
+    FROM
+        public.staging_events events
+        
+    WHERE
+        page = 'NextSong'
+    ) as events
+    left join public.staging_songs as song on song.artist_name = events.artist
+                                          and song.title = events.song
+                                          and song.duration = events.length
+
+; 
+"""
 
 users = """
-INSERT INTO users 
+INSERT INTO public.users 
 SELECT cast(userid as int) 
 ,    firstname
 ,    lastname
 ,    gender
 ,    level
+
 FROM
     (
     SELECT userid
@@ -19,47 +45,50 @@ FROM
     ,    gender
     ,    level
     ,    row_number() over (partition by userid order by ts desc) as row_number_ts_desc
+    
     FROM
-        staging_events
+        public.staging_events
+        
     WHERE
         userid != ''
     )
+    
 WHERE
     row_number_ts_desc = 1 
 ;
 """
 
-
 songs = """
-INSERT INTO songs 
+INSERT INTO public.songs 
 SELECT song_id
 ,    title
 ,    artist_id
 ,    year
 ,    duration
+
 FROM
-    staging_songs
+    public.staging_songs
 ;
 """
 
-
 artists = """
-INSERT INTO artists
+INSERT INTO public.artists
 SELECT artist_id 
 ,    max(artist_name) as artist_id
 ,    max(artist_location) as location
 ,    max(artist_latitude) as latitude
 ,    max(artist_longitude) as longitude
+
 FROM
-    staging_songs
+    public.staging_songs
+    
 GROUP BY
     artist_id
 ;
 """
 
-
 time = """
-INSERT INTO time
+INSERT INTO public.time
 SELECT timestamp as start_time
 ,    extract(hour from timestamp) as hour
 ,    extract(day from timestamp) as day
@@ -67,11 +96,13 @@ SELECT timestamp as start_time
 ,    extract(month from timestamp) as month
 ,    extract(year from timestamp) as year
 ,    case when extract(weekday from timestamp) between 1 and 5 then TRUE else FALSE end as weekday
+
 FROM
     ( 
     SELECT DISTINCT timestamp 'epoch' + CAST(ts AS BIGINT)/1000 * interval '1 second' AS timestamp 
+    
     FROM
-        staging_events
+        public.staging_events
 
     WHERE
         page='NextSong'

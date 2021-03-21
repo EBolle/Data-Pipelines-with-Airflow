@@ -1,6 +1,7 @@
-  -- CREATE TABLE statements on the Redshift cluster
+-- CREATE TABLE statements on the Redshift cluster
 
- -- DROP the tables if they do exist to start with a fresh schema
+
+-- DROP the tables if they do exist to start with a fresh schema
 
 DROP TABLE if EXISTS public.staging_events;
 DROP TABLE if EXISTS public.staging_songs;
@@ -10,7 +11,7 @@ DROP TABLE if EXISTS public.songs;
 DROP TABLE if EXISTS public.artists;
 DROP TABLE if EXISTS public.time;
 
-  -- CREATE the tables
+-- CREATE the tables
 
 CREATE TABLE public.staging_events (
     artist text,
