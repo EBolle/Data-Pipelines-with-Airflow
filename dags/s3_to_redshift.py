@@ -28,7 +28,10 @@ dag = DAG('s3_to_redshift',
 
   # DAG Operators
 
-start_operator = DummyOperator(task_id='start_execution', dag=dag)
+start_operator = PostgresOperator(task_id='start_execution',
+                                  dag=dag,
+                                  postgres_conn_id='redshift',
+                                  sql=create_tables)
 
 create_staging_events = PostgresOperator(
         task_id='create_staging_events',
