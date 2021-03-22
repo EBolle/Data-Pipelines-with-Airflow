@@ -1,17 +1,8 @@
 -- CREATE TABLE statements on the Redshift cluster
 
 
--- DROP the tables if they do exist to start with a fresh schema
-
+staging_events = """
 DROP TABLE if EXISTS public.staging_events;
-DROP TABLE if EXISTS public.staging_songs;
-DROP TABLE if EXISTS public.songplays;
-DROP TABLE if EXISTS public.users;
-DROP TABLE if EXISTS public.songs;
-DROP TABLE if EXISTS public.artists;
-DROP TABLE if EXISTS public.time;
-
--- CREATE the tables
 
 CREATE TABLE public.staging_events (
     artist text,
@@ -33,7 +24,11 @@ CREATE TABLE public.staging_events (
     userAgent text,
     userId text)
 diststyle even;
+"""
 
+
+staging_songs = """
+DROP TABLE if EXISTS public.staging_songs;
 
 CREATE TABLE public.staging_songs (
     num_songs int,
@@ -48,7 +43,11 @@ CREATE TABLE public.staging_songs (
     year int)
 diststyle even 
 ;
+"""
 
+
+songplays = """
+DROP TABLE if EXISTS public.songplays;
 
 CREATE TABLE public.songplays (
     songplay_id int identity(0, 1) PRIMARY KEY,
@@ -63,6 +62,10 @@ CREATE TABLE public.songplays (
 diststyle even
 ;
 
+
+users = """
+DROP TABLE if EXISTS public.users;
+
 CREATE TABLE public.users (
     user_id int primary key,
     first_name text,
@@ -70,7 +73,11 @@ CREATE TABLE public.users (
     gender text,
     level text)
 diststyle all;
+"""
 
+
+songs = """
+DROP TABLE if EXISTS public.songs;
 
 CREATE TABLE public.songs (
     song_id text primary key,
@@ -80,7 +87,11 @@ CREATE TABLE public.songs (
     duration real)
 diststyle all
 ;
+"""
 
+
+artists = """
+DROP TABLE if EXISTS public.artists;
 
 CREATE TABLE public.artists (
     artist_id text primary key,
@@ -90,7 +101,11 @@ CREATE TABLE public.artists (
     longitude real)
 diststyle all
 ;
+"""
 
+
+time = """
+DROP TABLE if EXISTS public.time;
 
 CREATE TABLE public.time (
     start_time timestamp primary key sortkey,
@@ -102,3 +117,4 @@ CREATE TABLE public.time (
     weekday boolean)
 diststyle even
 ;
+"""
