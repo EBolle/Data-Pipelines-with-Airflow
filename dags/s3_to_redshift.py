@@ -168,6 +168,8 @@ create_staging_songs >> load_staging_songs
 [load_staging_events, load_staging_songs] >> create_songplays_table
 create_songplays_table >> load_songplays_table
 
+load_songplays_table >> [create_songs_table, create_users_table, create_artists_table, create_time_table]
+
 create_songs_table >> load_songs_table
 create_users_table >> load_users_table
 create_artists_table >> load_artists_table

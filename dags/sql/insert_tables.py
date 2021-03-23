@@ -2,7 +2,7 @@
 
 
 songplays = """
-INSERT INTO public.songplays
+INSERT INTO public.songplays (start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
 SELECT timestamp 'epoch' + CAST(events.ts AS BIGINT)/1000 * interval '1 second' AS start_time 
 ,    cast(events.userid as int) as user_id
 ,    events.level

@@ -1,4 +1,4 @@
--- CREATE TABLE statements on the Redshift cluster
+# CREATE TABLE statements on the Redshift cluster
 
 
 staging_events = """
@@ -61,6 +61,7 @@ CREATE TABLE public.songplays (
     user_agent text)
 diststyle even
 ;
+"""
 
 
 users = """
