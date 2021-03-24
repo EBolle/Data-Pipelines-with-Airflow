@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
-from airflow.operators import StageToRedshiftOperator
+from airflow.operators.stage_redshift import StageToRedshiftOperator
 
 from sql import create_tables
 
