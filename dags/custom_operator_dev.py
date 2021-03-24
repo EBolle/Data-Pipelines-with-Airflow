@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
-from airflow.operators.stage_redshift import StageToRedshiftOperator
+from operators.stage_redshift import StageToRedshiftOperator
 
 from sql import create_tables
 
@@ -44,9 +44,8 @@ start_operator = DummyOperator(
 
 
 stage_events = StageToRedshiftOperator(
-    create_table_sql=create_tables.staging_events,
-    quality_sql="SELECT count(*) FROM public.staging_events",
     task_id='staging_events',
+    create_table_sql=create_tables.staging_events,
     s3_bucket='udacity-dend',
     s3_key='log_data',
     schema='PUBLIC',
@@ -54,6 +53,7 @@ stage_events = StageToRedshiftOperator(
     redshift_conn_id='redshift',
     aws_conn_id='aws_credentials',
     copy_options=["JSON 'auto ignorecase'"])
+
 
 start_operator >> stage_events
 

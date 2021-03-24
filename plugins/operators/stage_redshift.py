@@ -49,7 +49,7 @@ class StageToRedshiftOperator(BaseOperator):
 
     def execute(self, context) -> None:
         postgres_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
-        s3_hook = S3Hook(aws_conn_id=self.aws_conn_id, verify=self.verify)
+        s3_hook = S3Hook(aws_conn_id=self.aws_conn_id)
         credentials = s3_hook.get_credentials()
         credentials_block = build_credentials_block(credentials)
         copy_options = '\n\t\t\t'.join(self.copy_options)
@@ -57,13 +57,13 @@ class StageToRedshiftOperator(BaseOperator):
         copy_statement = self._build_copy_query(credentials_block, copy_options)
 
         self.log.info("Creating the staging table...")
-        postgres_hook.run(self.create_table_sql, self.autocommit)
+        postgres_hook.run(self.create_table_sql)
         self.log.info("Creating the staging table complete...")
 
         self.log.info('Executing COPY command...')
-        postgres_hook.run(copy_statement, self.autocommit)
+        postgres_hook.run(copy_statement)
         self.log.info("COPY command complete...")
 
         self.log.info("Verifying the data has been inserted...")
-        SQLCheckOperator(f"SELECT count(*) FROM {self.schema}.{self.table}")
+        SQLCheckOperator(task_id='quality_check', sql=f"SELECT count(*) FROM {self.schema}.{self.table}")
         self.log.info("Verifying the data has been inserted complete...")
