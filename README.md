@@ -1,6 +1,6 @@
 # Data Pipelines with Airflow
 
-## Diagrams & Table schema
+## Diagrams & Airflow UI Graph view
 
 S3 >> Redshift
 
