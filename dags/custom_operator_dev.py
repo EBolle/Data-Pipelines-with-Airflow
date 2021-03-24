@@ -10,15 +10,6 @@ from operators.stage_redshift import StageToRedshiftOperator
 from sql import create_tables
 
 
-# Operator 1: Staging the data
-# Requirements: the task uses params to generate the copy statement dynamically
-#             : The operator contains logging in different steps of the execution
-#             : The SQL statements are executed by using a Airflow hook
-# Idea: base a large part on the S3TORedshiftOperator and add your personal code to it
-# Creates the staging table - loads the staging table - checks the staging table --> staging_dag !
-# Note: check S3 bucket how to select based on date
-
-
 # DAG setup
 
 default_args = {'owner': 'airflow',
