@@ -2,12 +2,12 @@
 
 from typing import List, Optional
 
+from airflow.exceptions import AirflowException
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.providers.amazon.aws.utils.redshift import build_credentials_block
 from airflow.utils.decorators import apply_defaults
-from airflow.operators.sql import SQLCheckOperator
 
 
 class StageToRedshiftOperator(BaseOperator):
@@ -64,6 +64,15 @@ class StageToRedshiftOperator(BaseOperator):
         postgres_hook.run(copy_statement)
         self.log.info("COPY command complete...")
 
-        self.log.info("Verifying the data has been inserted...")
-        SQLCheckOperator(task_id='quality_check', sql=f"SELECT count(*) FROM {self.schema}.{self.table}")
-        self.log.info("Verifying the data has been inserted complete...")
+        self.log.info("Verifying the data has been correctly inserted...")
+        number_of_rows = postgres_hook.get_first(f"SELECT count(*) FROM {self.schema}.{self.table}")[0]
+        number_of_keys_s3 = s3_hook.list_keys(bucket_name=self.bucket, prefix=self.s3_key)
+
+        self.log.info(f"{self.schema}.{self.table} has {number_of_rows} rows")
+        self.log.info(f"{number_of_keys_s3}")
+
+        # if these match add a
+        if number_of_rows != number_of_keys_s3:
+            raise AirflowException("The number of items in S3 do not match the number of rows in the target table.")
+
+        self.log.info("Verifying the data has been inserted been correctly inserted complete...")
