@@ -1,0 +1,1 @@
+# SQL statements that can be used for quality checks given the SQLCheckOperator
