@@ -2,8 +2,6 @@
 
 
 staging_events = """
-DROP TABLE if EXISTS public.staging_events;
-
 CREATE TABLE public.staging_events (
     artist text,
     auth text,
@@ -28,8 +26,6 @@ diststyle even;
 
 
 staging_songs = """
-DROP TABLE if EXISTS public.staging_songs;
-
 CREATE TABLE public.staging_songs (
     num_songs int,
     artist_id text,
@@ -47,8 +43,6 @@ diststyle even
 
 
 songplays = """
-DROP TABLE if EXISTS public.songplays;
-
 CREATE TABLE public.songplays (
     songplay_id int identity(0, 1) PRIMARY KEY,
     start_time timestamp sortkey,
@@ -65,8 +59,6 @@ diststyle even
 
 
 users = """
-DROP TABLE if EXISTS public.users;
-
 CREATE TABLE public.users (
     user_id int primary key,
     first_name text,
@@ -78,8 +70,6 @@ diststyle all;
 
 
 songs = """
-DROP TABLE if EXISTS public.songs;
-
 CREATE TABLE public.songs (
     song_id text primary key,
     title text,
@@ -92,8 +82,6 @@ diststyle all
 
 
 artists = """
-DROP TABLE if EXISTS public.artists;
-
 CREATE TABLE public.artists (
     artist_id text primary key,
     name text,
@@ -106,8 +94,6 @@ diststyle all
 
 
 time = """
-DROP TABLE if EXISTS public.time;
-
 CREATE TABLE public.time (
     start_time timestamp primary key sortkey,
     hour int,
