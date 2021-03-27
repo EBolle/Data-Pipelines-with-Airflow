@@ -4,7 +4,6 @@
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
-from airflow.operators.sql import SQLCheckOperator
 
 
 class LoadDimensionOperator(BaseOperator):
@@ -22,18 +21,23 @@ class LoadDimensionOperator(BaseOperator):
                  *args, **kwargs):
         super(LoadDimensionOperator, self).__init__(*args, **kwargs)
         self.insert_table_sql = insert_table_sql
-        self.redshift_conn_id = redshift_conn_id
+        self.schema = schema
+        self.table = table
         self.truncate = truncate
+        self.redshift_conn_id = redshift_conn_id
 
     def execute(self, context):
         postgres_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 
         if self.truncate:
-            self.log.info("Truncating the table...")
-            postgres_hook.run(self.create_table_sql)
-            self.log.info("Truncating the table completed...")
+            self.log.info(f"Truncating {self.schema}.{self.table}...")
+            postgres_hook.run(f"DELETE FROM {self.schema}.{self.table}")
+            self.log.info(f"Truncating {self.schema}.{self.table} completed...")
 
-        self.log.info("Inserting the data into the table...")
-        postgres_hook.run(self.insert_table_sql)
-        self.log.info("Inserting the data into the table completed...")
-
+        self.log.info(f"Inserting the data into {self.schema}.{self.table}...")
+        sql = f"""
+        INSERT INTO {self.schema}.{self.table}
+        {self.insert_table_sql}
+        """
+        postgres_hook.run(sql)
+        self.log.info(f"Inserting the data into {self.schema}.{self.table} completed...")
