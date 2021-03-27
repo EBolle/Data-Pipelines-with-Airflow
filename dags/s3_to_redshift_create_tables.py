@@ -27,50 +27,42 @@ dag = DAG('s3_to_redshift_create_tables',
 # Operators
 
 start_operator = DummyOperator(
-    task_id='Begin_create_tables',
-    dag=dag
-)
+    task_id='begin_create_tables',
+    dag=dag)
 
 create_songplays_table = PostgresOperator(
-    task_id='Create_songplays_table',
+    task_id='create_songplays_table',
     dag=dag,
     postgres_conn_id='redshift',
-    sql=create_tables.songplays
-)
+    sql=create_tables.songplays)
 
 create_songs_table = PostgresOperator(
-    task_id='Create_songs_table',
+    task_id='create_songs_table',
     dag=dag,
     postgres_conn_id='redshift',
-    sql=create_tables.songs
-)
-
+    sql=create_tables.songs)
 
 create_users_table = PostgresOperator(
-    task_id='Create_users_table',
+    task_id='create_users_table',
     dag=dag,
     postgres_conn_id='redshift',
-    sql=create_tables.users
-)
+    sql=create_tables.users)
 
 create_artists_table = PostgresOperator(
-    task_id='Create_artists_table',
+    task_id='create_artists_table',
     dag=dag,
     postgres_conn_id='redshift',
-    sql=create_tables.artists
-)
+    sql=create_tables.artists)
 
 create_time_table = PostgresOperator(
-    task_id='Create_time_table',
+    task_id='create_time_table',
     dag=dag,
     postgres_conn_id='redshift',
-    sql=create_tables.time
-)
+    sql=create_tables.time)
 
 end_operator = DummyOperator(
-    task_id='End_create_tables',
-    dag=dag
-)
+    task_id='end_create_tables',
+    dag=dag)
 
 # Order of execution
 
