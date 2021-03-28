@@ -47,7 +47,7 @@ class StageToRedshiftOperator(BaseOperator):
                     {copy_options};
         """
 
-    def execute(self, context) -> None:
+    def execute(self) -> None:
         postgres_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         s3_hook = S3Hook(aws_conn_id=self.aws_conn_id)
         credentials = s3_hook.get_credentials()
@@ -64,15 +64,11 @@ class StageToRedshiftOperator(BaseOperator):
         postgres_hook.run(copy_statement)
         self.log.info("COPY command complete...")
 
-        self.log.info("Verifying the data has been correctly inserted...")
+        self.log.info("Logging the number of rows and files on S3 affected...")
         number_of_rows = postgres_hook.get_first(f"SELECT count(*) FROM {self.schema}.{self.table}")[0]
-        number_of_keys_s3 = s3_hook.list_keys(bucket_name=self.bucket, prefix=self.s3_key)
+        number_of_keys_s3 = s3_hook.list_keys(bucket_name=self.s3_bucket, prefix=self.s3_key)
 
         self.log.info(f"{self.schema}.{self.table} has {number_of_rows} rows")
-        self.log.info(f"{number_of_keys_s3}")
+        self.log.info(f"{self.s3_bucket}/{self.s3_key} has {len(number_of_keys_s3)} files")
 
-        # if these match add a
-        if number_of_rows != number_of_keys_s3:
-            raise AirflowException("The number of items in S3 do not match the number of rows in the target table.")
-
-        self.log.info("Verifying the data has been inserted been correctly inserted complete...")
+        self.log.info("Logging the number of rows and files on S3 affected complete...")

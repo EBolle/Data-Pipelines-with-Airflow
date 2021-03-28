@@ -30,7 +30,6 @@ FROM
 """
 
 users = """
-INSERT INTO public.users 
 SELECT cast(userid as int) 
 ,    firstname
 ,    lastname
@@ -59,7 +58,6 @@ WHERE
 """
 
 songs = """
-INSERT INTO public.songs 
 SELECT song_id
 ,    title
 ,    artist_id
@@ -72,7 +70,6 @@ FROM
 """
 
 artists = """
-INSERT INTO public.artists
 SELECT artist_id 
 ,    max(artist_name) as artist_id
 ,    max(artist_location) as location
@@ -88,7 +85,6 @@ GROUP BY
 """
 
 time = """
-INSERT INTO public.time
 SELECT timestamp as start_time
 ,    extract(hour from timestamp) as hour
 ,    extract(day from timestamp) as day

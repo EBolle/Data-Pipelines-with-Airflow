@@ -6,7 +6,7 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.sql import SQLCheckOperator
-from airflow.sensors import external_task
+from airflow.sensors.external_task import ExternalTaskSensor
 
 from sql import quality_checks
 
@@ -27,12 +27,10 @@ dag = DAG('s3_to_redshift_data_quality_checks',
 
 # Operators
 
-wait_for_insert_tables = external_task(
+wait_for_insert_tables = ExternalTaskSensor(
+    task_id='dq_sensor',
     external_dag_id='s3_to_redshift_insert_tables',
-    external_task_id='end_insert_tables',
-    allowed_states='success',
-    check_existence=True
-)
+    external_task_id='end_insert_tables')
 
 start_operator = DummyOperator(
     task_id='begin_data_quality_checks',
@@ -64,5 +62,6 @@ end_operator = DummyOperator(
 
 # Order of execution
 
+wait_for_insert_tables >> start_operator
 start_operator >> [dq_songplays, dq_users, dq_songs, dq_artists, dq_time]
 [dq_songplays, dq_users, dq_songs, dq_artists, dq_time] >> end_operator

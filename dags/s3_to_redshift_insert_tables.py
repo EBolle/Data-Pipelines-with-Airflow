@@ -105,9 +105,6 @@ end_operator = DummyOperator(
 # Order of execution
 
 start_operator >> [stage_events, stage_songs]
-
 [stage_events, stage_songs] >> load_songplays
-
 load_songplays >> [load_users, load_songs, load_artists, load_time]
-
 [load_users, load_songs, load_artists, load_time] >> end_operator

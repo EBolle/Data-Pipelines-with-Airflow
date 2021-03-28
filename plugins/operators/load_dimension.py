@@ -26,7 +26,7 @@ class LoadDimensionOperator(BaseOperator):
         self.truncate = truncate
         self.redshift_conn_id = redshift_conn_id
 
-    def execute(self, context):
+    def execute(self):
         postgres_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 
         if self.truncate:
