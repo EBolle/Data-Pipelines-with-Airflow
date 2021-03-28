@@ -48,5 +48,13 @@ FROM
 
 
 time = """
+SELECT count(*) as n_rows
+,    count(distinct start_time) = count(*) as n_unique_id_check
+,    min(extract(year from start_time)) = 2018 & max(extract(year from start_time)) = 2018
+,    min(extract(month from start_time)) = 11 & max(extract(month from start_time)) = 11
+,    sum(case when weekday in (True, False) then 1 else 0 end) = count(*) as weekday_check
 
+FROM
+    public.time
+;
 """
