@@ -20,7 +20,7 @@ Why -> explain dq log statement, are the number of files and insert records what
 
 ## Data Quality
 
-Why -> explain the sensor
+Why -> explain the sensor -> explain how the SQLCheckOperator works
 - Graph
 
 ## Airflow on your local machine

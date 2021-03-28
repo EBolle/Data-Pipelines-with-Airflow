@@ -29,6 +29,7 @@ FROM
 ; 
 """
 
+
 users = """
 SELECT cast(userid as int) 
 ,    firstname
@@ -57,6 +58,7 @@ WHERE
 ;
 """
 
+
 songs = """
 SELECT song_id
 ,    title
@@ -68,6 +70,7 @@ FROM
     public.staging_songs
 ;
 """
+
 
 artists = """
 SELECT artist_id 
@@ -83,6 +86,7 @@ GROUP BY
     artist_id
 ;
 """
+
 
 time = """
 SELECT timestamp as start_time

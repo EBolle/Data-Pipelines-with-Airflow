@@ -13,6 +13,7 @@ FROM
 ;
 """
 
+
 users = """
 SELECT count(*) as n_rows
 ,    count(distinct user_id) = count(*) as n_unique_id_check
@@ -21,15 +22,30 @@ SELECT count(*) as n_rows
 
 FROM
     public.users
+;
 """
+
 
 songs = """
+SELECT count(*) as n_rows
+,    count(distinct song_id) = count(*) as n_unique_id_check
+,    sum(case when duration > 0 then 1 else 0 end) = count(*) as duration_check
 
+FROM
+    public.songs
+;
 """
+
 
 artists = """
+SELECT count(*) as n_rows
+,    count(distinct artist_id) = count(*) as n_unique_id_check
 
+FROM
+    public.artists
+;
 """
+
 
 time = """
 
