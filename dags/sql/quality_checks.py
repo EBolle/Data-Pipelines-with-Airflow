@@ -14,7 +14,13 @@ FROM
 """
 
 users = """
+SELECT count(*) as n_rows
+,    count(distinct user_id) = count(*) as n_unique_id_check
+,    sum(case when level in ('free', 'paid') then 1 else 0 end) = count(*) as level_check
+,    sum(case when gender in ('M', 'F') then 1 else 0 end) = count(*) as gender_check
 
+FROM
+    public.users
 """
 
 songs = """
