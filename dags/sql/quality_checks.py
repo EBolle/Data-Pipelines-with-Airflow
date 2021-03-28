@@ -3,7 +3,14 @@
 
 
 songplays = """
+SELECT count(*) as n_rows
+,    count(distinct songplay_id) = count(*) as n_unique_id_check
+,    min(extract(year from start_time)) = 2018 & max(extract(year from start_time)) = 2018
+,    min(extract(month from start_time)) = 11 & max(extract(month from start_time)) = 11
 
+FROM
+    public.songplays
+;
 """
 
 users = """
