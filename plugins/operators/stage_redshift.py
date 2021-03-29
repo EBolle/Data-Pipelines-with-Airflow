@@ -47,7 +47,7 @@ class StageToRedshiftOperator(BaseOperator):
                     {copy_options};
         """
 
-    def execute(self) -> None:
+    def execute(self, context) -> None:
         postgres_hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         s3_hook = S3Hook(aws_conn_id=self.aws_conn_id)
         credentials = s3_hook.get_credentials()

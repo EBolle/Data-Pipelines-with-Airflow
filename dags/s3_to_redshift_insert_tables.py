@@ -1,28 +1,29 @@
-# This DAG inserts the data for the fact and dimension tables
+# This DAG inserts the data for the fact and dimension tables and performs several data quality checks
 
 import datetime
 from datetime import timedelta
 
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.sql import SQLCheckOperator
 from operators.load_dimension import LoadDimensionOperator
 from operators.load_fact import LoadFactOperator
 from operators.stage_redshift import StageToRedshiftOperator
 
-from sql import create_tables, insert_tables
+from sql import create_tables, insert_tables, quality_checks
 
 # DAG setup
 
 default_args = {'owner': 'airflow',
                 'depends_on_past': False,
-                'retries': 0,
+                'retries': 3,
                 'retry_delay': timedelta(minutes=5),
                 'email_on_retry': False}
 
 dag = DAG('s3_to_redshift_insert_tables',
           description='Inserts data into the fact and dimension tables in Redshift',
           start_date=datetime.datetime.now(),
-          schedule_interval='@once',
+          schedule_interval='@hourly',
           default_args=default_args,
           catchup=False)
 
@@ -98,6 +99,26 @@ load_time = LoadDimensionOperator(
     truncate=False,
     redshift_conn_id='redshift')
 
+dq_songplays = SQLCheckOperator(task_id='dq_songplays',
+                                dag=dag,
+                                sql=quality_checks.songplays)
+
+dq_users = SQLCheckOperator(task_id='dq_users',
+                            dag=dag,
+                            sql=quality_checks.users)
+
+dq_songs = SQLCheckOperator(task_id='dq_songs',
+                            dag=dag,
+                            sql=quality_checks.songs)
+
+dq_artists = SQLCheckOperator(task_id='dq_artists',
+                              dag=dag,
+                              sql=quality_checks.artists)
+
+dq_time = SQLCheckOperator(task_id='dq_time',
+                           dag=dag,
+                           sql=quality_checks.time)
+
 end_operator = DummyOperator(
     task_id='end_insert_tables',
     dag=dag)
@@ -105,6 +126,14 @@ end_operator = DummyOperator(
 # Order of execution
 
 start_operator >> [stage_events, stage_songs]
+
 [stage_events, stage_songs] >> load_songplays
-load_songplays >> [load_users, load_songs, load_artists, load_time]
-[load_users, load_songs, load_artists, load_time] >> end_operator
+load_songplays >> dq_songplays
+dq_songplays >> [load_users, load_songs, load_artists, load_time]
+
+load_users >> dq_users
+load_songs >> dq_songs
+load_artists >> dq_artists
+load_time >> dq_time
+
+[dq_users, dq_songs, dq_artists, dq_time] >> end_operator

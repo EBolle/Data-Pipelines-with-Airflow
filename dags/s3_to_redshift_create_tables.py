@@ -13,7 +13,7 @@ from sql import create_tables
 
 default_args = {'owner': 'airflow',
                 'depends_on_past': False,
-                'retries': 0,
+                'retries': 3,
                 'retry_delay': timedelta(minutes=5),
                 'email_on_retry': False}
 
