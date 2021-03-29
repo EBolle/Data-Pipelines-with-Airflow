@@ -1,19 +1,25 @@
 # Data Pipelines with Airflow
 
-## Diagrams & Airflow UI Graph view
+Due to the steady increase of more and complexer data warehouse ETL jobs Sparkify decided to start using Airflow. This
+tool allows them to automate and monitor their complex ETL jobs via a user friendly UI, and allows their Data Engineers
+to write the pipelines in Python.
 
-S3 >> Redshift
+## The challenge
 
-- create tables
-- insert tables
-- data quality
+For this project 2 S3 buckets with .json files need to be staged in Redshift. These 2 staging tables are the building
+blocks for 4 dimension and 1 fact table.
 
-## Create tables
+To handle this amount of complexity 2 DAGS were written:
+
+- s3_to_redshift_create_tables.py
+- s3_to_redshift_insert_tables.py
+
+## s3_to_redshift_create_tables.py
 
 Why 
 - Graph
 
-## Insert tables
+## s3_to_redshift_insert_tables.py
 
 Why -> explain dq log statement, are the number of files and insert records what you expected?
 - Graph

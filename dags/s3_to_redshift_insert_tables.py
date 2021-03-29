@@ -101,22 +101,27 @@ load_time = LoadDimensionOperator(
 
 dq_songplays = SQLCheckOperator(task_id='dq_songplays',
                                 dag=dag,
+                                conn_id='redshift',
                                 sql=quality_checks.songplays)
 
 dq_users = SQLCheckOperator(task_id='dq_users',
                             dag=dag,
+                            conn_id='redshift',
                             sql=quality_checks.users)
 
 dq_songs = SQLCheckOperator(task_id='dq_songs',
                             dag=dag,
+                            conn_id='redshift',
                             sql=quality_checks.songs)
 
 dq_artists = SQLCheckOperator(task_id='dq_artists',
                               dag=dag,
+                              conn_id='redshift',
                               sql=quality_checks.artists)
 
 dq_time = SQLCheckOperator(task_id='dq_time',
                            dag=dag,
+                           conn_id='redshift',
                            sql=quality_checks.time)
 
 end_operator = DummyOperator(
