@@ -1,6 +1,6 @@
 # Data Pipelines with Airflow
 
-Due to the steady increase of more and complexer data warehouse ETL jobs Sparkify decided to start using Airflow. This
+Due to the steady increase of more and complexer data warehouse ETL jobs, Sparkify decided to start using Airflow. This
 tool allows them to automate and monitor their complex ETL jobs via a user friendly UI, and allows their Data Engineers
 to write the pipelines in Python.
 
@@ -35,15 +35,15 @@ robustness any `DROP TABLE` statement is excluded from the SQL queries.
 
 This DAG contains a lot of steps, some of them based on custom operators:
 
-- Create the staging tables on Redshift and COPY the .json files into these tables
-- Insert the data into the songplays fact table and perform a data quality check
-- Insert the data into the dimension tables and perform a data quality check 
+- Create the staging tables on Redshift, COPY the .json files into these tables, and log the data quality
+- Insert the data into the songplays fact table and execute a data quality check
+- Insert the data into the dimension tables and execute a data quality check 
 
 <img src="https://user-images.githubusercontent.com/49920622/112883924-24810f80-90cf-11eb-9b32-9c797ce390c8.JPG">
 
 ## Data Quality
 
-There are 2 data quality checks build into the s3_to_redshift_insert_tables.py DAG:
+There are 2 data quality checks build into the s3_to_redshift_insert_tables.py:
 
 - a data quality log statement when staging the tables to RedShift
 - an individual data quality check per table which needs to be passed in order for the DAG to complete
@@ -68,20 +68,26 @@ FROM
 
 ## Instructions
 
-- Make sure you have Airflow up and running -> see Airflow on your local machine as an example
-- Make sure you have valid AWS credentials
-- Make sure you have a running Redshift cluster
-- Clone this project into the Airflow folder
-- Make sure the DAGS and PLUGINS folder are set correctly in airflow config
-- Activate both dags and trigger them manually
+There are quite a few things you need to take care of before you can run this project:
 
-## Airflow on your local machine
+- Make sure Airflow is up and running
+- Copy / clone the `dags` and `plugins` folder into your Airflow folder
+- Make sure your `dags` and `plugins` folder are correctly referred to in `airflow.cfg`
+- Add valid AWS credentials and AWS Redshift cluster information to the `Admin > Connections` tab in the Airflow UI
 
-- WSL
-- Postgres
+Once you are ready, you should see the 2 DAGS in the UI. Unpause both DAGS and manually trigger `s3_to_redshift_create_tables.py` first.
+When finished, manually trigger `s3_to_redshift_insert_tables.py`. After the first run the insert DAG should run every
+hour.
+
+This project was tested on a local instance of Airflow version 2.0.1 with the use of WSL and PostgreSQL. If you are
+interested in replicating this approach please have a look [here][airflow_wsl_1], [here][airflow_local],
+and [here][postgresql_wsl].
 
 ## Contact
 
 In case of suggestions or remarks please contact the Data Engineering department.
 
 [sql_check_operator]: https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/sql/index.html
+[airflow_wsl_1]: https://towardsdatascience.com/run-apache-airflow-on-windows-10-without-docker-3c5754bb98b4
+[airflow_local]: https://airflow.apache.org/docs/apache-airflow/stable/start/local.html
+[postgresql_wsl]: https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-database
