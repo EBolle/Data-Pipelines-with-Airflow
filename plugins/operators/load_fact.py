@@ -1,4 +1,4 @@
-# Module designed specifically for the songplays_table, hence no additional parameters
+# Module designed to easily append data to a fact table
 
 
 from airflow.hooks.postgres_hook import PostgresHook
@@ -8,8 +8,8 @@ from airflow.utils.decorators import apply_defaults
 
 class LoadFactOperator(BaseOperator):
     """
-    This operator allows for append only mode due to the fact that typical fact tables are very large in size.
-    When you are using this operator for a new table you can use the create table statement though.
+    This operator takes care of inserting data into the fact table. You may only append data to an existing table since
+    we expect the fact table to be too large in size to truncate-append.
     """
     ui_color = '#F98866'
 

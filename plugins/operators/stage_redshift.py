@@ -1,8 +1,11 @@
-# This module creates a table in Redshift, copies data from S3 into the table, and performs a quality check on the data.
+# This module creates a table in Redshift, copies data from S3 into the table, and logs a data quality check.
+# Note that a large part of this code is copy-pasted from the official Airflow s3_to_redshift operator, this operator
+# merely extends it with a create_table statement and a data quality check. For more information please have
+# a look at https://github.com/apache/airflow/blob/master/airflow/providers/amazon/aws/transfers/s3_to_redshift.py.
+
 
 from typing import List, Optional
 
-from airflow.exceptions import AirflowException
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
@@ -12,8 +15,8 @@ from airflow.utils.decorators import apply_defaults
 
 class StageToRedshiftOperator(BaseOperator):
     """
-    This operator extends the S3ToRedShiftOperator with a create table statement and quality checks. Please note that a
-    large part of this code is directly copy-pasted from https://github.com/apache/airflow/blob/master/airflow/providers/amazon/aws/transfers/s3_to_redshift.py.
+    This operator extends the official Airflow S3ToRedShiftOperator with a create table statement and logs a data
+    quality check.
     """
     ui_color = '#358140'
 

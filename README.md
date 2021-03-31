@@ -45,7 +45,9 @@ custom operators:
 ## Data Quality
 
 Staging: check the logs
-Fact & Dimension: SQLCheckOperator
+Fact & Dimension: SQLCheckOperator (https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/sql/index.html)
+
+Show snippets.
 
 ## Instructions
 

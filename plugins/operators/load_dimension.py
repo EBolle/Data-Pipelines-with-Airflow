@@ -7,8 +7,10 @@ from airflow.utils.decorators import apply_defaults
 
 
 class LoadDimensionOperator(BaseOperator):
-    """The default behaviour is to truncate-append the data"""
-
+    """
+    This operator takes care of inserting data into the dimension tables. The default behaviour is to append the data to
+    an already existing table but you can also choose to truncate-append.
+    """
     ui_color = '#80BD9E'
 
     @apply_defaults
