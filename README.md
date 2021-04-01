@@ -7,9 +7,7 @@ to write the pipelines in Python.
 ## The challenge
 
 For this project 2 S3 buckets with .json files need to be staged in Redshift. These 2 staging tables are the building
-blocks for 4 dimension and 1 fact table.
-
-To handle this data warehouse ETL pipeline 2 DAGS were written:
+blocks for 4 dimension tables and 1 fact table. The complete process is handled with 2 dags:
 
 - s3_to_redshift_create_tables.py
 - s3_to_redshift_insert_tables.py
@@ -43,15 +41,16 @@ This DAG contains a lot of steps, some of them based on custom operators:
 
 ## Data Quality
 
-There are 2 data quality checks build into the s3_to_redshift_insert_tables.py:
+There are 2 data quality checks build into the s3_to_redshift_insert_tables.py DAG:
 
-- a data quality log statement when staging the tables to RedShift
-- an individual data quality check per table which needs to be passed in order for the DAG to complete
+- a data quality log statement when staging the tables to Redshift
 
 <img src="https://user-images.githubusercontent.com/49920622/113088590-36090b00-91e6-11eb-9191-ca003afbe21b.JPG">
 
+- an individual data quality check per table which needs to be passed in order for the DAG to complete
+
 The individual data quality checks are handled by the official Airflow SQLCheckOperator, and fed with tailored SQL
-queries per table. More information on this operator can be found [here][sql_check_operator]. 
+queries per table. More information on this operator can be found [here][sql_check_operator], an example:
 
 ```sql
 SELECT count(*) as n_rows
@@ -74,6 +73,7 @@ There are quite a few things you need to take care of before you can run this pr
 - Copy / clone the `dags` and `plugins` folders into your Airflow folder
 - Make sure your `dags` and `plugins` folders are correctly referred to in `airflow.cfg`
 - Add valid AWS credentials and AWS Redshift cluster information to the `Admin > Connections` tab in the Airflow UI
+- If necessary modify the connection string parameter in the operators
 
 Once you are ready, you should see the 2 DAGS in the UI. Unpause both DAGS and manually trigger `s3_to_redshift_create_tables.py` first.
 When finished, manually trigger `s3_to_redshift_insert_tables.py`. After the first run the insert DAG should run every
