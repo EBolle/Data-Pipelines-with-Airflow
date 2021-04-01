@@ -16,21 +16,21 @@ from sql import create_tables, insert_tables, quality_checks
 
 default_args = {'owner': 'airflow',
                 'depends_on_past': False,
+                'start_date': datetime.datetime.now(),
                 'retries': 3,
                 'retry_delay': timedelta(minutes=5),
-                'email_on_retry': False}
+                'email_on_retry': False,
+                'catchup': False}
 
 dag = DAG('s3_to_redshift_insert_tables',
           description='Inserts data into the fact and dimension tables in Redshift',
-          start_date=datetime.datetime.now(),
           schedule_interval='@hourly',
-          default_args=default_args,
-          catchup=False)
+          default_args=default_args)
 
 # Operators
 
 start_operator = DummyOperator(
-    task_id='begin_insert_tables',
+    task_id='start_insert_tables',
     dag=dag)
 
 stage_events = StageToRedshiftOperator(

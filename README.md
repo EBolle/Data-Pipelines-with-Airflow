@@ -71,8 +71,8 @@ FROM
 There are quite a few things you need to take care of before you can run this project:
 
 - Make sure Airflow is up and running
-- Copy / clone the `dags` and `plugins` folder into your Airflow folder
-- Make sure your `dags` and `plugins` folder are correctly referred to in `airflow.cfg`
+- Copy / clone the `dags` and `plugins` folders into your Airflow folder
+- Make sure your `dags` and `plugins` folders are correctly referred to in `airflow.cfg`
 - Add valid AWS credentials and AWS Redshift cluster information to the `Admin > Connections` tab in the Airflow UI
 
 Once you are ready, you should see the 2 DAGS in the UI. Unpause both DAGS and manually trigger `s3_to_redshift_create_tables.py` first.

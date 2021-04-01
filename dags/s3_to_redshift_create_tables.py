@@ -13,21 +13,21 @@ from sql import create_tables
 
 default_args = {'owner': 'airflow',
                 'depends_on_past': False,
+                'start_date': datetime.datetime.now(),
                 'retries': 3,
                 'retry_delay': timedelta(minutes=5),
-                'email_on_retry': False}
+                'email_on_retry': False,
+                'catchup': False}
 
 dag = DAG('s3_to_redshift_create_tables',
           description='Creates the fact and dimension tables in Redshift',
-          start_date=datetime.datetime.now(),
           schedule_interval='@once',
-          default_args=default_args,
-          catchup=False)
+          default_args=default_args)
 
 # Operators
 
 start_operator = DummyOperator(
-    task_id='begin_create_tables',
+    task_id='start_create_tables',
     dag=dag)
 
 create_songplays_table = PostgresOperator(
